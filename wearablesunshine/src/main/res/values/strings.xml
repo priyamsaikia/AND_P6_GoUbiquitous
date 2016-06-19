@@ -1,0 +1,5 @@
+<resources xmlns:xliff="http://schemas.android.com/tools">
+    <string name="app_name">WearableSunshine</string>
+    <string name="my_digital_name">SunshineFace</string>
+    <string name="temp"><xliff:g id="low">%1$s</xliff:g></string>
+</resources>
