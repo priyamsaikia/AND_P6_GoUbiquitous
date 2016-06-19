@@ -15,7 +15,6 @@ public class SunshineReceiverService extends WearableListenerService {
 
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
-        Log.d(TAG, "onDataChanged");
         super.onDataChanged(dataEventBuffer);
         for (DataEvent dataEvent : dataEventBuffer) {
             if (dataEvent.getType() == DataEvent.TYPE_CHANGED) {
@@ -23,13 +22,12 @@ public class SunshineReceiverService extends WearableListenerService {
                 String path = dataEvent.getDataItem().getUri().getPath();
                 if (path.equals("/sunshine")) {
                     String low = dataMap.getString("low_temp");
-                    String timestamp = dataMap.getString("timestamp");
+                    String weatherId = dataMap.getString("weatherId");
                     String high = dataMap.getString("high_temp");
                     Log.d(TAG, "low =" + low + " high = " + high);
-                    Intent intent = new Intent(AppConstants.INTENT_STRING);
-                    intent.putExtra(AppConstants.low, low);
-                    intent.putExtra(AppConstants.high, high);
-                    sendBroadcast(intent);
+                    Utility.setHighTemp(getApplicationContext(), high);
+                    Utility.setLowTemp(getApplicationContext(), low);
+                    Utility.setWeatherId(getApplicationContext(), weatherId);
                 }
             }
         }

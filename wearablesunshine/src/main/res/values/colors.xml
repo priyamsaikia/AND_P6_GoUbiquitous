@@ -5,4 +5,5 @@
     <color name="background2">#000088</color>
     <color name="primary">#03A9F4</color>  <!-- 500 -->
     <color name="digital_text">#ffffff</color>
+    <color name="light_text">#aaffffff</color>
 </resources>

@@ -95,6 +95,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         Paint mBackgroundPaint;
         Paint mTextPaint;
         Paint mTextTemperaturePaint;
+        Paint mTextTemperaturePaint2;
         Paint mTextCalendarPaint;
         boolean mAmbient;
         Time mTime;
@@ -149,17 +150,21 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             mTextPaint = new Paint();
             mTextCalendarPaint = new Paint();
             mTextTemperaturePaint = new Paint();
+            mTextTemperaturePaint2 = new Paint();
             mTextPaint = createTextPaint(resources.getColor(R.color.digital_text));
-            mTextCalendarPaint = createTextPaint(resources.getColor(R.color.digital_text));
+            mTextCalendarPaint = createTextPaint(resources.getColor(R.color.light_text));
             mTextTemperaturePaint = createTextPaint(resources.getColor(R.color.digital_text));
+            mTextTemperaturePaint2 = createTextPaint(resources.getColor(R.color.light_text));
+            mTextTemperaturePaint.setTextAlign(Paint.Align.RIGHT);
+            mTextCalendarPaint.setTextAlign(Paint.Align.CENTER);
 
-            mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_clear);
+            mBitmap = BitmapFactory.decodeResource(getResources(),
+                    Utility.getIconResourceForWeatherCondition(Integer.parseInt(Utility.getWeatherId(getApplicationContext()))));
 
             mTime = new Time();
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM dd yyyy");
             mCalendarText = sdf.format(calendar.getTime());
-
         }
 
         @Override
@@ -223,6 +228,8 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             boolean isRound = insets.isRound();
             mXOffset = resources.getDimension(isRound
                     ? R.dimen.digital_x_offset_round : R.dimen.digital_x_offset);
+            mXOffset = resources.getDimension(isRound
+                    ? R.dimen.digital_x_offset_round : R.dimen.digital_x_offset);
             mTextSize = resources.getDimension(isRound
                     ? R.dimen.digital_text_size_round : R.dimen.digital_text_size);
             mCalendarTextSize = resources.getDimension(isRound
@@ -233,6 +240,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             mTextPaint.setTextSize(mTextSize);
             mTextCalendarPaint.setTextSize(mCalendarTextSize);
             mTextTemperaturePaint.setTextSize(mTemparatureTextSize);
+            mTextTemperaturePaint2.setTextSize(mTemparatureTextSize);
         }
 
         @Override
@@ -291,26 +299,37 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         public void onDraw(Canvas canvas, Rect bounds) {
             // Draw the background.
             if (isInAmbientMode()) {
-                canvas.drawColor(Color.BLACK);
+                canvas.drawColor(Color.RED);
             } else {
                 canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
             }
 
             // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
             mTime.setToNow();
-//            String text = mAmbient
-//                    ? String.format("%d:%02d", mTime.hour, mTime.minute)
-//                    : String.format("%d:%02d:%02d", mTime.hour, mTime.minute, mTime.second);
             String text = String.format("%d:%02d", mTime.hour, mTime.minute);
 
-            String textCalendar = String.format("%s", mCalendarText);
-
-            canvas.drawText(text, mXOffset, mYOffset, mTextPaint);
+            //  canvas.drawText(textCalendar, bounds.centerX(), mTextPaint.ascent() + mTextPaint.descent(), mTextPaint);
             if (!isInAmbientMode()) {
-                canvas.drawText(textCalendar, mXOffset, mYOffset + mTextSize, mTextCalendarPaint);
-                canvas.drawBitmap(mBitmap, mXOffset, mYOffset + mCalendarTextSize + mTextSize, mTextPaint);
-                canvas.drawText("24", mXOffset + mBitmap.getWidth(),
-                        mYOffset + mCalendarTextSize + mTextSize, mTextTemperaturePaint);
+                String textCalendar = (String.format("%s", mCalendarText)).toUpperCase();
+                mTextPaint.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText(text, bounds.centerX(), mYOffset, mTextPaint);
+                mTextPaint.setTextAlign(Paint.Align.LEFT);
+                canvas.drawText(textCalendar, bounds.centerX(), mYOffset + mTextSize, mTextCalendarPaint);
+                canvas.drawLine(bounds.centerX() - 25, bounds.centerY() + 25, bounds.centerX() + 25, bounds.centerY() + 25, mTextPaint);
+
+                if (Utility.getLowTemperature(getApplicationContext()) != null
+                        && Utility.getLowTemperature(getApplicationContext()).length() != 0) {
+                    canvas.drawBitmap(mBitmap, mXOffset, bounds.centerY() + 32.5f, mTextPaint);
+                    String degree = getText(R.string.temp) + "";
+                    canvas.drawText(Utility.getLowTemperature(getApplicationContext()) + degree, bounds.centerX(),
+                            bounds.centerY() + 65, mTextTemperaturePaint);
+                    canvas.drawText(Utility.getHighTemperature(getApplicationContext()) + degree, bounds.centerX() + 50,
+                            bounds.centerY() + 65, mTextTemperaturePaint2);
+
+                } else {
+                    canvas.drawText(getText(R.string.no_data) + "", bounds.centerX(),
+                            bounds.centerY() - 25, mTextTemperaturePaint);
+                }
             }
         }
 

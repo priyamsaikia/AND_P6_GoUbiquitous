@@ -1,5 +1,6 @@
 <resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">WearableSunshine</string>
     <string name="my_digital_name">SunshineFace</string>
-    <string name="temp"><xliff:g id="low">%1$s</xliff:g></string>
+    <string name="temp"><xliff:g id="low">\u00B0</xliff:g></string>
+    <string name="no_data">No Data Found!</string>
 </resources>

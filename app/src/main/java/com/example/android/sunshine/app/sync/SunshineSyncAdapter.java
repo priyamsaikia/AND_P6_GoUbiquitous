@@ -374,7 +374,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements 
                 low = temperatureObject.getDouble(OWM_MIN);
 
                 if (i == 0) {
-                    sendTodayData(low + "", high + "", "HELLO");
+                    sendTodayData((int) low + "", (int) high + "", weatherId + "");
                 }
 
                 ContentValues weatherValues = new ContentValues();
@@ -708,7 +708,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements 
             return;
         } else {
             PutDataMapRequest pdmr = PutDataMapRequest.create("/sunshine");
-            pdmr.getDataMap().putString("timestamp", System.currentTimeMillis() + "");//todo change to info
+            pdmr.getDataMap().putString("weatherId", info);
             pdmr.getDataMap().putString("low_temp", low);
             pdmr.getDataMap().putString("high_temp", high);
 
